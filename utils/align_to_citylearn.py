@@ -133,7 +133,7 @@ def load_and_transform_building(path: str, b_number: int):
         'indoor_relative_humidity': df['Relative Humidity'].astype(float)
     })
 
-    citylearn_df.to_csv(f"../data/processed/building_{b_number}.csv", index=False)
+    citylearn_df.to_csv(f"../data/building_{b_number}.csv", index=False)
     print(f"Processed building_{b_number} and saved it.")
 
 if __name__ == "__main__":

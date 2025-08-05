@@ -54,8 +54,7 @@ def process_weather(df, city_name, outage_hours_per_year=200, outage_duration_me
     features['Power Outage Flag'] = outage_flag
 
     # Save
-    os.makedirs('../data/processed', exist_ok=True)
-    output_path = f'../data/processed/weather_{city_name}.csv'
+    output_path = f'../data/weather_{city_name}.csv'
     features.to_csv(output_path, index=False)
     print(f"Processed: {city_name}, to: {output_path}")
 
