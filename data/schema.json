@@ -102,7 +102,7 @@
         "autosize_attributes": { "safety_factor": 1.2 }
       },
       "dynamics": {
-        "type": "core_rl.dynamics.TransformerDynamicsAdapter",
+        "type": "corerl.dynamics.TransformerDynamicsAdapter",
         "attributes": {
           "filename": "building_1.pth"
         }

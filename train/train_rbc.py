@@ -2,8 +2,9 @@
 Train RBC agent.
 
 Usage:
-  python train_rbc.py --schema ./data/schema.json --episodes 30 --seed 42
+  python train_rbc.py --schema ./data/schema.json 
 """
+
 from citylearn.citylearn import CityLearnEnv 
 import argparse
 from pathlib import Path
@@ -12,7 +13,7 @@ from citylearn.agents.rbc import RBC as Agent
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--schema", type=str, default="schema.json", help="Path to CityLearn's schema.json")
-    parser.add_argument("--episodes", type=int, default=30, help="Number of training episodes")
+    parser.add_argument("--episodes", type=int, default=5, help="Number of training episodes")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--eval_csv", type=str, default="kpis_after_training.csv", help="Where to save KPIs CSV")
     args = parser.parse_args()
