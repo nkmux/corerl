@@ -7,18 +7,25 @@ DesignBuilder is very static (e.g. values are repeated often between days.)
 import pandas as pd
 import numpy as np
 
-def compute_cooling_demand(temp):
-    """"
-    Generate realistic cooling demand based on the current temperature. 
-    Setpoint temperature is 22C
-    Demand is 0 if temp is less than 20, little noise between 20 and 22, and linearly increasing after 22.
+def compute_cooling_demand(temp_c):
     """
-    if temp < 20:
+    Return cooling demand in kWh for a 1-h step.
+
+    - Set-point: 22 °C
+    - Nothing below 20 °C
+    - Between 20-22 °C: tiny stochastic load
+    - Above 22 °C: linear ramp chosen so the villa hits ~70 kW at 45 °C
+    """
+    if temp_c < 20:
         return 0.0
-    elif 20 <= temp < 22:
-        return np.random.normal(0.1, 0.02)
+    elif temp_c < 22:
+        return np.random.normal(0.12, 0.03)       # small latent load
     else:
-        return np.clip((temp - 22) * 2.0 + np.random.normal(0, 0.2), 0.0, None)
+        # slope chosen so (45 °C gives 72 kWh)
+        slope = 3.1
+        noise  = np.random.normal(0, 0.4)
+        return (temp_c - 22) * slope + noise
+
 
 def compute_non_shiftable_load(df): 
     """
@@ -66,35 +73,48 @@ def compute_non_shiftable_load(df):
     ]
 
 
-def compute_dhw_demand(hour, day_type):
+def compute_dhw_demand(hour, day_type, occupants=5):
     """
-    Generate realistic DHW demand in kWh based on hour and day type.
+    Return DHW demand in kWh for a 1-h step.
+    - hour: current hour
+    - day_type: 0 = weekday, 1 = weekend
+    - occupants: scale demand for more / fewer people
     """
-    # Determine baseline probability of usage and volume distribution parameters
-    if 5 <= hour <= 9:  # Morning routine
-        usage_prob = 0.85 if day_type == 0 else 0.7  
-        volume_mean = 0.7
-        volume_sigma = 0.4
-    elif 12 <= hour <= 14:  # Lunch
-        usage_prob = 0.4 if day_type == 0 else 0.5
-        volume_mean = 0.3
-        volume_sigma = 0.25
-    elif 18 <= hour <= 22:  # Evening usage
-        usage_prob = 0.9 if day_type == 0 else 0.95
-        volume_mean = 0.9
-        volume_sigma = 0.5
-    else:  # Idle hours
+    if 5 <= hour <= 8:       # morning showers
+        usage_prob = 0.85 if day_type == 0 else 0.70
+        mu, sigma = 0.8, 0.4
+    elif 12 <= hour <= 13:   # lunchtime wash-up
+        usage_prob = 0.45 if day_type == 0 else 0.55
+        mu, sigma = 0.35, 0.25
+    elif 18 <= hour <= 22:   # evening showers & dishes
+        usage_prob = 0.90 if day_type == 0 else 0.95
+        mu, sigma = 1.0, 0.5
+    else:                    # idle hours
         usage_prob = 0.05 if day_type == 0 else 0.08
-        volume_mean = 0.02
-        volume_sigma = 0.01
+        mu, sigma = 0.03, 0.01             # rare small “real” uses
+        trickle_mean, trickle_sd = 0.02, 0.006  # baseline trickle
 
-    # Whether demand occurs this hour
     if np.random.rand() < usage_prob:
-        # Generate demand volume using lognormal distribution
-        dhw_kwh = np.random.lognormal(mean=volume_mean, sigma=volume_sigma)
-        return dhw_kwh
-    
-    return np.random.normal(0.01, 0.005)  # idle baseline
+        # scale by occupant count; log-normal generates positive skew
+        kwh = np.random.lognormal(mean=mu, sigma=sigma) * (occupants / 6)
+    else:
+        # Gamma trickle with mean=trickle_mean and sd=trickle_sd (always >= 0)
+        # (only defined/used in idle hours; for non-idle, these variables won’t be read)
+        if 'trickle_mean' in locals():
+            m, s = trickle_mean, trickle_sd
+        else:
+            # non-idle hours: keep a tiny positive baseline to avoid exact zeros
+            m, s = 0.005, 0.002
+        k = (m / s) ** 2           # shape
+        theta = (s ** 2) / m       # scale
+        kwh = np.random.gamma(shape=k, scale=theta)
+
+    # clamp & round to kill float fuzz
+    if abs(kwh) < 1e-6:
+        kwh = 0.0
+    return float(round(kwh, 6))
+
+
 
 
 def load_and_transform_building(path: str, b_number: int):
@@ -108,7 +128,6 @@ def load_and_transform_building(path: str, b_number: int):
     # Parse datetime
     df['datetime'] = pd.to_datetime(df['Date/Time'], format="mixed")
     df['month'] = df['datetime'].dt.month
-    df['day'] = df['datetime'].dt.day
     df['hour'] = df['datetime'].dt.hour
     df['day_type'] = (df['datetime'].dt.weekday >= 5).astype(int)
 
@@ -122,21 +141,39 @@ def load_and_transform_building(path: str, b_number: int):
     # Final CityLearn-aligned DataFrame
     citylearn_df = pd.DataFrame({
         'month': df['month'],
-        'day': df['day'],
         'hour': df['hour'],
         'day_type': df['day_type'],
         'cooling_demand': df['Operative Temperature'].astype(float).apply(compute_cooling_demand),
-        'dhw_demand': df['dhw_demand'].astype(float),
+        'dhw_demand': pd.to_numeric(df['dhw_demand'], errors='coerce').fillna(0).clip(lower=0).round(6),
         'non_shiftable_load': df['non_shiftable_load'],
         'occupant_count': df['Occupancy'].astype(float),
         'indoor_dry_bulb_temperature': df['Operative Temperature'].astype(float),
         'indoor_relative_humidity': df['Relative Humidity'].astype(float)
     })
 
-    citylearn_df.to_csv(f"../data/building_{b_number}.csv", index=False)
+    COP = 3.2
+    P_nominal = 22.0 # kW electric
+
+    # citylearn_df['cooling_device'] = (citylearn_df['cooling_demand'] / (COP * P_nominal)).clip(0, 1)
+
+    NOMINAL_PWR = 6.0 # kW (autosize target or your own choice)
+    EFF = 0.95 # resistive efficiency
+    # instantaneous kW electric needed
+    # citylearn_df['dhw_device'] = (citylearn_df['dhw_demand'] / (EFF * NOMINAL_PWR)).clip(0, 1)
+
+    # Simulate a simple decaying storage SOC over the day
+    # citylearn_df['cooling_storage_soc'] = 1.0 - (citylearn_df['hour'] / 24.0)
+    # citylearn_df['dhw_storage_soc'] = 0.5 + 0.3 * np.sin(2 * np.pi * citylearn_df['hour'] / 24.0)
+    # citylearn_df['cooling_storage_soc'] = citylearn_df['cooling_storage_soc'].clip(0, 1)
+    # citylearn_df['dhw_storage_soc'] = citylearn_df['dhw_storage_soc'].clip(0, 1)
+
+    citylearn_df['heating_demand'] = 0
+    citylearn_df['solar_generation'] = 0
+
+    citylearn_df.to_csv(f"data/building_{b_number}.csv", index=False)
     print(f"Processed building_{b_number} and saved it.")
 
 if __name__ == "__main__":
-    load_and_transform_building("../data/raw/RUH_RES_BUILDING.csv", 1)
-    load_and_transform_building("../data/raw/JED_RES_BUILDING.csv", 2)
-    load_and_transform_building("../data/raw/ABH_RES_BUILDING.csv", 3)
+    load_and_transform_building("data/raw/RUH_RES_BUILDING.csv", 1)
+    load_and_transform_building("data/raw/JED_RES_BUILDING.csv", 2)
+    load_and_transform_building("data/raw/ABH_RES_BUILDING.csv", 3)

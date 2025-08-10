@@ -23,37 +23,32 @@ def load_weather(path):
     ]
     return df
 
-# Generate features and simulate outages
-def process_weather(df, city_name, outage_hours_per_year=200, outage_duration_mean=2):
+def process_weather(df, city_name):
     selected = df[['DryBulbTemp_C', 'RelativeHumidity_%',
                    'DiffuseHorizontalRad_W/m2', 'DirectNormalRad_W/m2']].copy()
-
     features = pd.DataFrame()
-    features['Outdoor Drybulb Temperature (C)'] = selected['DryBulbTemp_C']
-    features['Outdoor Relative Humidity (%)'] = selected['RelativeHumidity_%']
-    features['Diffuse Solar Radiation (W/m2)'] = selected['DiffuseHorizontalRad_W/m2']
-    features['Direct Solar Radiation (W/m2)'] = selected['DirectNormalRad_W/m2']
+    
+    features['outdoor_dry_bulb_temperature'] = selected['DryBulbTemp_C']
+    features['outdoor_relative_humidity'] = selected['RelativeHumidity_%']
+    features['diffuse_solar_irradiance'] = selected['DiffuseHorizontalRad_W/m2']
+    features['direct_solar_irradiance'] = selected['DirectNormalRad_W/m2']
 
-    for hrs in [6, 12, 24]:
-        features[f'{hrs}h Outdoor Drybulb Temperature (C)'] = selected['DryBulbTemp_C'].rolling(window=hrs, min_periods=1).mean()
-        features[f'{hrs}h Outdoor Relative Humidity (%)'] = selected['RelativeHumidity_%'].rolling(window=hrs, min_periods=1).mean()
-        features[f'{hrs}h Diffuse Solar Radiation (W/m2)'] = selected['DiffuseHorizontalRad_W/m2'].rolling(window=hrs, min_periods=1).mean()
-        features[f'{hrs}h Direct Solar Radiation (W/m2)'] = selected['DirectNormalRad_W/m2'].rolling(window=hrs, min_periods=1).mean()
-
-    # Simulate outages
-    n = len(features)
-    outage_flag = np.zeros(n, dtype=int)
-
-    total_outage_hours = outage_hours_per_year * ((n // 8760) or 1)
-    outage_starts = np.random.choice(np.arange(n), size=total_outage_hours // outage_duration_mean, replace=False)
-
-    for start in outage_starts:
-        duration = int(np.random.exponential(outage_duration_mean))
-        outage_flag[start:min(start + duration, n)] = 1
-
-    features['Power Outage Flag'] = outage_flag
+    for idx, hrs in enumerate([6, 12, 24], start=1):
+        features[f'outdoor_dry_bulb_temperature_predicted_{idx}'] = (
+            selected['DryBulbTemp_C'].rolling(window=hrs, min_periods=1).mean()
+        )
+        features[f'outdoor_relative_humidity_predicted_{idx}'] = (
+            selected['RelativeHumidity_%'].rolling(window=hrs, min_periods=1).mean()
+        )
+        features[f'diffuse_solar_irradiance_predicted_{idx}'] = (
+            selected['DiffuseHorizontalRad_W/m2'].rolling(window=hrs, min_periods=1).mean()
+        )
+        features[f'direct_solar_irradiance_predicted_{idx}'] = (
+            selected['DirectNormalRad_W/m2'].rolling(window=hrs, min_periods=1).mean()
+        )
 
     # Save
+    features['hour'] = df['Hour']
     output_path = f'../data/weather_{city_name}.csv'
     features.to_csv(output_path, index=False)
     print(f"Processed: {city_name}, to: {output_path}")
