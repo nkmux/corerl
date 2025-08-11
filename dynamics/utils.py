@@ -10,9 +10,9 @@ def add_time_cyc(df: pd.DataFrame):
     df["month_cos"] = np.cos(2*np.pi*(df["month"]-1)/12)
     df["hour_sin"]  = np.sin(2*np.pi*df["hour"]/24)
     df["hour_cos"]  = np.cos(2*np.pi*df["hour"]/24)
-    # weekend/weekday to sin/cos (or keep raw 0/1)
-    df["day_type_sin"] = np.sin(np.pi*df["day_type"])
-    df["day_type_cos"] = np.cos(np.pi*df["day_type"])
+    # day_type is 1..7 (1=Sunday, ..., 7=Saturday): encode cyclically over 7 days
+    df["day_type_sin"] = np.sin(2*np.pi*(df["day_type"]-1)/7)
+    df["day_type_cos"] = np.cos(2*np.pi*(df["day_type"]-1)/7)
     return df
 
 def chronological_split(df: pd.DataFrame, lookback: int, train_frac=0.75, val_frac=0.10):
