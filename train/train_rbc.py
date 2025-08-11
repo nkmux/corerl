@@ -5,10 +5,27 @@ Usage:
   python train_rbc.py --schema ./data/schema.json 
 """
 
-from citylearn.citylearn import CityLearnEnv 
+# ---- BEGIN hotfix: alias repo as 'core_rl' ----
+import importlib.util, sys, pathlib
 import argparse
 from pathlib import Path
-from citylearn.agents.rbc import RBC as Agent 
+
+project_root = pathlib.Path(__file__).parent.parent.resolve()
+real_dir = project_root
+
+# Alias top-level package corerl
+spec = importlib.util.spec_from_file_location(
+    "corerl",
+    real_dir / "__init__.py",
+    submodule_search_locations=[str(real_dir)]
+)
+corerl = importlib.util.module_from_spec(spec)
+sys.modules["corerl"] = corerl
+spec.loader.exec_module(corerl)
+# ---- END hotfix ----
+
+from citylearn.citylearn import CityLearnEnv 
+from citylearn.agents.rbc import HourRBC as Agent
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,19 +38,15 @@ def main():
     schema_path = Path(args.schema).expanduser().resolve()
 
     env = CityLearnEnv(schema=schema_path, central_agent=False, random_seed=args.seed)
-    agent = Agent(
-        env,
-        batch_size=256
-    )
 
-    # Train
-    agent.learn(episodes=args.episodes)
+    agent = Agent(env)
 
-    # Deterministic evaluation + export KPIs
+    agent.learn(episodes=2)
+
+    # Deterministic evaluation + print KPIs
     kpis = env.evaluate()
-    kpis.to_csv(args.eval_csv, index=True)
-    print(f"[OK] Training finished. KPIs saved to: {args.eval_csv}")
-
-
+    print(f"[OK] Training finished.")
+    print(kpis)
+    
 if __name__ == "__main__":
     main()
