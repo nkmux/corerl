@@ -50,22 +50,16 @@ class TransformerDynamicsAdapter:
 
         # IO config
         self.input_observation_names  = ckpt["input_observation_names"]
-        self.lookback     = int(ckpt["lookback"])
-        self.n_features   = len(self.input_observation_names)
+        self.lookback = int(ckpt["lookback"])
+        self.n_features= len(self.input_observation_names)
 
-        self.input_normalization_minimum = torch.tensor(
-            ckpt["input_normalization_minimum"], dtype=torch.float32
-        )
-        self.input_normalization_maximum = torch.tensor(
-            ckpt["input_normalization_maximum"], dtype=torch.float32
-        )
+        self.input_normalization_minimum = torch.tensor(ckpt["input_normalization_minimum"], dtype=torch.float32)
+        self.input_normalization_maximum = torch.tensor(ckpt["input_normalization_maximum"], dtype=torch.float32)
         
         # Target scaling (if present in your training)
-        self.target_names = ckpt.get("target_names", None)
-        if self.target_names is None:
-            self.target_names = TARGET_NAMES
+        self.target_names = TARGET_NAMES
 
-        self.indoor_idx = self.target_names.index("indoor_dry_bulb_temperature")
+        self.indoor_idx = TARGET_NAMES.index("indoor_dry_bulb_temperature")
 
         self.has_y_scale = ("target_minimum" in ckpt and "target_maximum" in ckpt)
         if self.has_y_scale:
@@ -73,9 +67,8 @@ class TransformerDynamicsAdapter:
             self.y_max = torch.tensor(ckpt["target_maximum"], dtype=torch.float32)
 
         # If your model already outputs normalized targets, set this True; otherwise False
-        self.outputs_are_normalized = ckpt.get("outputs_normalized", True)
+        self.outputs_are_normalized = ckpt.get("outputs_normalized", False)
 
-        # --- CityLearn-required attrs ---
         # Flat 2D list: [feature][ready_flag + lookback scalars]
         self._model_input  = [[0.0] + [0.0]*self.lookback for _ in range(self.n_features)]
         # Dummy LSTM hidden state (h, c)
@@ -94,8 +87,7 @@ class TransformerDynamicsAdapter:
         # Ensure (T, F)
         if x.dim() == 3:  # (B,T,F) -> (T,F)
             x = x.squeeze(0)
-        assert x.dim() == 2 and x.shape[0] == self.lookback and x.shape[1] == self.n_features, \
-            f"expected {(self.lookback, self.n_features)}, got {tuple(x.shape)}"
+        assert x.dim() == 2 and x.shape[0] == self.lookback and x.shape[1] == self.n_features, f"expected {(self.lookback, self.n_features)}, got {tuple(x.shape)}"
 
         # Mirror x into _model_input with FLAT scalars (no nested lists)
         x_np = x.detach().cpu().float().numpy()   # (T, F)
@@ -111,12 +103,10 @@ class TransformerDynamicsAdapter:
             y_all = self.model(x.unsqueeze(0)).squeeze(0)  # (num_targets,)
 
         y_t = y_all[self.indoor_idx]
-
         # Return normalized indoor temp as CityLearn expects
         if self.outputs_are_normalized:
             y_norm = torch.clamp(y_t, 0.0, 1.0)
         else:
-            # model outputs °C -> normalize using checkpoint bounds
             assert self.has_y_scale, "Need target_min/max to normalize °C output."
             y_norm = (y_t - self.y_min[self.indoor_idx]) / (self.y_max[self.indoor_idx] - self.y_min[self.indoor_idx] + 1e-8)
             y_norm = torch.clamp(y_norm, 0.0, 1.0)

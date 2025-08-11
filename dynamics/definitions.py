@@ -1,6 +1,4 @@
 TARGET_NAMES = [
-    "cooling_device",
-    "dhw_device",
     "cooling_storage_soc",
     "dhw_storage_soc",
     "indoor_dry_bulb_temperature",
@@ -18,6 +16,4 @@ INPUT_NAMES = [
     # current indoor temperature (autoregressive feature)
     "indoor_dry_bulb_temperature",
     # (optional) previous actions could be included as inputs; we'll test with and without
-    # "cooling_device", "dhw_device",
-    # "cooling_storage_soc", "dhw_storage_soc",
 ]
