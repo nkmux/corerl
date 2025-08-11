@@ -66,9 +66,9 @@ def compute_non_shiftable_load(df):
     # Apply scaling
     df['non_shiftable_load'] *= combined_scaling
 
-    # Apply hourly shaping based on day_type
+    # Apply hourly shaping based on day_of_week (Sunday=1, ..., Saturday=7)
     df['non_shiftable_load'] *= [
-        weekend_shape[h] if dt == 1 else weekday_shape[h]
+        weekend_shape[h] if dt in (1, 7) else weekday_shape[h]
         for h, dt in zip(df['hour'], df['day_type'])
     ]
 
@@ -77,20 +77,21 @@ def compute_dhw_demand(hour, day_type, occupants=5):
     """
     Return DHW demand in kWh for a 1-h step.
     - hour: current hour
-    - day_type: 0 = weekday, 1 = weekend
+    - day_type: 1..7 (1=Sunday, 2=Monday, ..., 7=Saturday)
     - occupants: scale demand for more / fewer people
     """
+    is_weekend = day_type in (1, 7)
     if 5 <= hour <= 8:       # morning showers
-        usage_prob = 0.85 if day_type == 0 else 0.70
+        usage_prob = 0.70 if is_weekend else 0.85
         mu, sigma = 0.8, 0.4
     elif 12 <= hour <= 13:   # lunchtime wash-up
-        usage_prob = 0.45 if day_type == 0 else 0.55
+        usage_prob = 0.55 if is_weekend else 0.45
         mu, sigma = 0.35, 0.25
     elif 18 <= hour <= 22:   # evening showers & dishes
-        usage_prob = 0.90 if day_type == 0 else 0.95
+        usage_prob = 0.95 if is_weekend else 0.90
         mu, sigma = 1.0, 0.5
     else:                    # idle hours
-        usage_prob = 0.05 if day_type == 0 else 0.08
+        usage_prob = 0.08 if is_weekend else 0.05
         mu, sigma = 0.03, 0.01             # rare small “real” uses
         trickle_mean, trickle_sd = 0.02, 0.006  # baseline trickle
 
