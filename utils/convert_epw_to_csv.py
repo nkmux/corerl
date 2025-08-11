@@ -48,16 +48,15 @@ def process_weather(df, city_name):
         )
 
     # Save
-    features['hour'] = df['Hour']
-    output_path = f'../data/weather_{city_name}.csv'
+    output_path = f'./data/weather_{city_name}.csv'
     features.to_csv(output_path, index=False)
     print(f"Processed: {city_name}, to: {output_path}")
 
 # Paths
 weather_paths = {
-    'abha': '../data/raw/SAU_AS_Khalid.AB.411140_TMYx.2009-2023.epw',
-    'riyadh': '../data/raw/SAU_RI_Riyadh-Khalid.Intl.AP.404370_TMYx.2009-2023.epw',
-    'jeddah': '../data/raw/SAU_MK_Jeddah-Abdulaziz.Intl.AP.410240_TMYx.2009-2023.epw',
+    'abha': './data/raw/SAU_AS_Khalid.AB.411140_TMYx.2009-2023.epw',
+    'riyadh': './data/raw/SAU_RI_Riyadh-Khalid.Intl.AP.404370_TMYx.2009-2023.epw',
+    'jeddah': './data/raw/SAU_MK_Jeddah-Abdulaziz.Intl.AP.410240_TMYx.2009-2023.epw',
 }
 
 # Process all cities

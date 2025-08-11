@@ -129,7 +129,7 @@ def load_and_transform_building(path: str, b_number: int):
     df['datetime'] = pd.to_datetime(df['Date/Time'], format="mixed")
     df['month'] = df['datetime'].dt.month
     df['hour'] = df['datetime'].dt.hour
-    df['day_type'] = (df['datetime'].dt.weekday >= 5).astype(int)
+    df['day_type'] = df['datetime'].dt.isocalendar().day.astype(int)
 
     # Overwrite or smooth dhw_demand
     df['dhw_demand'] = [
@@ -143,7 +143,7 @@ def load_and_transform_building(path: str, b_number: int):
         'month': df['month'],
         'hour': df['hour'],
         'day_type': df['day_type'],
-        'cooling_demand': df['Operative Temperature'].astype(float).apply(compute_cooling_demand),
+        'cooling_demand': df['Operative Temperature'].astype(float).apply(compute_cooling_demand).fillna(0).clip(lower=0).round(6),
         'dhw_demand': pd.to_numeric(df['dhw_demand'], errors='coerce').fillna(0).clip(lower=0).round(6),
         'non_shiftable_load': df['non_shiftable_load'],
         'occupant_count': df['Occupancy'].astype(float),
@@ -151,22 +151,17 @@ def load_and_transform_building(path: str, b_number: int):
         'indoor_relative_humidity': df['Relative Humidity'].astype(float)
     })
 
-    COP = 3.2
-    P_nominal = 22.0 # kW electric
 
-    # citylearn_df['cooling_device'] = (citylearn_df['cooling_demand'] / (COP * P_nominal)).clip(0, 1)
+    weekend = df['day_type'].isin([6, 7])
 
-    NOMINAL_PWR = 6.0 # kW (autosize target or your own choice)
-    EFF = 0.95 # resistive efficiency
-    # instantaneous kW electric needed
-    # citylearn_df['dhw_device'] = (citylearn_df['dhw_demand'] / (EFF * NOMINAL_PWR)).clip(0, 1)
+    # Simple schedule: tighter by day, slightly higher at night; relax a bit on weekends
+    sp_day   = 24.0 - 0.5*weekend.astype(float)     # 24.0 on weekdays, 23.5 on weekends (occupied comfort)
+    sp_night = 25.5 + 0.5*weekend.astype(float)     # 25.5 on weekdays, 26.0 on weekends
 
-    # Simulate a simple decaying storage SOC over the day
-    # citylearn_df['cooling_storage_soc'] = 1.0 - (citylearn_df['hour'] / 24.0)
-    # citylearn_df['dhw_storage_soc'] = 0.5 + 0.3 * np.sin(2 * np.pi * citylearn_df['hour'] / 24.0)
-    # citylearn_df['cooling_storage_soc'] = citylearn_df['cooling_storage_soc'].clip(0, 1)
-    # citylearn_df['dhw_storage_soc'] = citylearn_df['dhw_storage_soc'].clip(0, 1)
+    cooling_sp = sp_day.where((df['hour']>=9)&(df['hour']<=22), sp_night)
+    df["indoor_dry_bulb_temperature_cooling_set_point"] = cooling_sp.round(2)
 
+    citylearn_df['hvac_mode'] = 1
     citylearn_df['heating_demand'] = 0
     citylearn_df['solar_generation'] = 0
 
