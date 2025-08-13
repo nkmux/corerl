@@ -3,8 +3,6 @@ This script converts epw files to the csv format accepted by the CityLearn libra
 It uses the files in the data/raw directory, processes them, and put the processed versions in data/processed. 
 """
 import pandas as pd
-import numpy as np
-import os
 
 # Load EPW files
 def load_weather(path):
@@ -24,7 +22,7 @@ def load_weather(path):
     return df
 
 def process_weather(df, city_name):
-    selected = df[['DryBulbTemp_C', 'RelativeHumidity_%',
+    selected = df[[ 'Month', 'Day', 'Hour', 'DryBulbTemp_C', 'RelativeHumidity_%',
                    'DiffuseHorizontalRad_W/m2', 'DirectNormalRad_W/m2']].copy()
     features = pd.DataFrame()
     
@@ -32,6 +30,17 @@ def process_weather(df, city_name):
     features['outdoor_relative_humidity'] = selected['RelativeHumidity_%']
     features['diffuse_solar_irradiance'] = selected['DiffuseHorizontalRad_W/m2']
     features['direct_solar_irradiance'] = selected['DirectNormalRad_W/m2']
+    
+    weather_cols = [
+        'outdoor_dry_bulb_temperature',
+        'outdoor_relative_humidity',
+        'diffuse_solar_irradiance',
+        'direct_solar_irradiance'
+    ]
+    features[weather_cols] = (
+        features[weather_cols]
+        .interpolate(method='linear', limit_direction='both')
+    )
 
     for idx, hrs in enumerate([6, 12, 24], start=1):
         features[f'outdoor_dry_bulb_temperature_predicted_{idx}'] = (

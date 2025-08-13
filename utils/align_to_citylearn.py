@@ -153,16 +153,30 @@ def load_and_transform_building(path: str, b_number: int):
     })
 
 
+    # Sa    udi building cooling setpoints - 22°C base with practical variations
     weekend = df['day_type'].isin([6, 7])
+    nighttime = (df['hour'] < 7) | (df['hour'] >= 23)  # 11 PM - 7 AM
+    work_hours = (df['hour'] >= 9) & (df['hour'] <= 17)  # 9 AM - 5 PM
 
-    # Simple schedule: tighter by day, slightly higher at night; relax a bit on weekends
-    sp_day   = 24.0 - 0.5*weekend.astype(float)     # 24.0 on weekdays, 23.5 on weekends (occupied comfort)
-    sp_night = 25.5 + 0.5*weekend.astype(float)     # 25.5 on weekdays, 26.0 on weekends
+    # Base setpoint: 22°C for comfort during occupied hours
+    # Higher setpoints during sleep/away periods for energy savings
+    cooling_sp = np.where(
+        nighttime,
+        24.0 + 1.0 * weekend.astype(float),  # 24-25°C at night (sleep setback)
+        np.where(
+            work_hours & ~weekend,
+            22.0,  # 22°C during work hours on weekdays (occupied comfort)
+            22.5 + 0.5 * weekend.astype(float)  # 22.5-23°C other times
+        )
+    )
 
-    cooling_sp = sp_day.where((df['hour']>=9)&(df['hour']<=22), sp_night)
-    df["indoor_dry_bulb_temperature_cooling_set_point"] = cooling_sp.round(2)
+    # Add small daily variation to make it more realistic
+    daily_variation = np.sin(2 * np.pi * df['day_type'] / 7) * 0.3  # ±0.3°C weekly cycle
+    cooling_sp += daily_variation
 
-    citylearn_df['hvac_mode'] = 1
+    citylearn_df['indoor_dry_bulb_temperature_cooling_set_point'] = np.round(cooling_sp, 1)
+
+    citylearn_df['hvac_mode'] = np.where(citylearn_df['cooling_demand'] > 1e-6, 1, 0).astype(int)
     citylearn_df['heating_demand'] = 0
     citylearn_df['solar_generation'] = 0
 
