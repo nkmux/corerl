@@ -1,0 +1,15 @@
+# Compatible versions for Python 3.11 (CPU by default)
+CityLearn==2.2.0
+numpy>=1.26,<2.3
+pandas>=2.1,<2.3
+matplotlib>=3.7
+# PyTorch: install CPU by default; for CUDA, install matching wheels from pytorch.org
+torch
+stable-baselines3>=2.4,<2.7
+# SB3 v2.x uses Gymnasium
+gymnasium>=0.29.1
+simplejson>=3.19
+psutil>=5.9,<7
+# For MPC benchmarks and optimization
+scipy>=1.10,<1.14
+cvxpy>=1.3

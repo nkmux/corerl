@@ -1,0 +1,143 @@
+{
+    "root_directory": null,
+    "central_agent": false,
+    "random_seed": 42,
+    "simulation_start_time_step": 0,
+    "simulation_end_time_step": 8759,
+    "episode_time_steps": 1440,
+    "rolling_episode_split": false,
+    "random_episode_split": false,
+    "seconds_per_time_step": 3600,
+    "reward_function": {
+      "type": "citylearn.reward_function.IndependentSACReward"
+    },
+    "observations": {
+      "month": {"active": true, "shared_in_central_agent": true},
+      "hour": {"active": true, "shared_in_central_agent": true},
+      "day_type": {"active": true, "shared_in_central_agent": true},
+      "outdoor_dry_bulb_temperature": {"active": true, "shared_in_central_agent": true},
+      "diffuse_solar_irradiance": {"active": true, "shared_in_central_agent": true},
+      "direct_solar_irradiance": {"active": true, "shared_in_central_agent": true},
+      "indoor_dry_bulb_temperature": {"active": true, "shared_in_central_agent": false},
+      "cooling_demand": {"active": true, "shared_in_central_agent": false},
+      "heating_demand": {"active": true, "shared_in_central_agent": false},
+      "non_shiftable_load": {"active": true, "shared_in_central_agent": false},
+      "solar_generation": {"active": true, "shared_in_central_agent": false},
+      "dhw_storage_soc": {"active": true, "shared_in_central_agent": false},
+      "net_electricity_consumption": {"active": true, "shared_in_central_agent": false},
+      "occupant_count": {"active": true, "shared_in_central_agent": false},
+      "indoor_dry_bulb_temperature_cooling_set_point": {"active": true, "shared_in_central_agent": false}
+    },
+    "actions": {
+      "cooling_device": {"active": true},
+      "cooling_storage": {"active": true},
+      "dhw_storage": {"active": true}
+    },
+    "buildings": {
+      "building_1": {
+        "type": "citylearn.building.Building",
+        "include": true,
+        "building_name": "building_1",
+        "energy_simulation": "building_1.csv",
+        "weather": "weather_riyadh.csv",
+        "inactive_observations": [],
+        "inactive_actions": [],
+        "cooling_device": {
+          "type": "citylearn.energy_model.HeatPump",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.7},
+          "attributes": {
+            "efficiency": 3.2,
+            "target_cooling_temperature": 8.0,
+            "target_heating_temperature": 45.0
+          }
+        },
+        "cooling_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 3}
+        },
+        "dhw_device": {
+          "type": "citylearn.energy_model.ElectricHeater",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.6},
+          "attributes": {"efficiency": 0.95}
+        },
+        "dhw_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 2}
+        }
+      },
+      "building_2": {
+        "type": "citylearn.building.Building",
+        "include": true,
+        "building_name": "building_2",
+        "energy_simulation": "building_2.csv",
+        "weather": "weather_jeddah.csv",
+        "inactive_observations": [],
+        "inactive_actions": [],
+        "cooling_device": {
+          "type": "citylearn.energy_model.HeatPump",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.7},
+          "attributes": {
+            "efficiency": 3.2,
+            "target_cooling_temperature": 8.0,
+            "target_heating_temperature": 45.0
+          }
+        },
+        "cooling_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 3}
+        },
+        "dhw_device": {
+          "type": "citylearn.energy_model.ElectricHeater",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.6},
+          "attributes": {"efficiency": 0.95}
+        },
+        "dhw_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 2}
+        }
+      },
+      "building_3": {
+        "type": "citylearn.building.Building",
+        "include": true,
+        "building_name": "building_3",
+        "energy_simulation": "building_3.csv",
+        "weather": "weather_abha.csv",
+        "inactive_observations": [],
+        "inactive_actions": [],
+        "cooling_device": {
+          "type": "citylearn.energy_model.HeatPump",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.7},
+          "attributes": {
+            "efficiency": 3.2,
+            "target_cooling_temperature": 8.0,
+            "target_heating_temperature": 45.0
+          }
+        },
+        "cooling_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 3}
+        },
+        "dhw_device": {
+          "type": "citylearn.energy_model.ElectricHeater",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 1.6},
+          "attributes": {"efficiency": 0.95}
+        },
+        "dhw_storage": {
+          "type": "citylearn.energy_model.StorageTank",
+          "autosize": true,
+          "autosize_attributes": {"safety_factor": 2}
+        }
+      }
+    }
+  }

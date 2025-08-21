@@ -1,0 +1,19 @@
+{
+  "challenge_id" : "control-track-citylearn-challenge",
+  "gpu": false, 
+  "authors" : ["dk0e"],
+  "description" : "Control Track: CityLearn Challenge Agent",
+  "central_agent": "True",
+  "active_observations": [
+    "hour",
+    "day_type",
+    "indoor_dry_bulb_temperature",
+    "indoor_dry_bulb_temperature_cooling_set_point",
+    "outdoor_dry_bulb_temperature",
+    "outdoor_dry_bulb_temperature_predicted_1",
+    "cooling_storage_soc",
+    "dhw_storage_soc",
+    "solar_generation"
+  ]
+}
+
