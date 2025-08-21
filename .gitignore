@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# IBEX GPU STUFF
+dcgm/
+
 # C extensions
 *.so
 
