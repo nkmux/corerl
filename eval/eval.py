@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from citylearn.citylearn import CityLearnEnv
+from citylearn.agents.base import Agent
+
 # ---------- internals ----------
 def _sum_reward(r):
     """Collapse CityLearn reward (scalar/dict/list/ndarray) into a single float."""
@@ -27,17 +30,17 @@ def _is_done(terminated, truncated):
     return _any(terminated) or _any(truncated)
 
 # ---------- public API ----------
-def run_episode_logging(env, agent, episodes: int) -> pd.DataFrame:
+def run_episode_logging(env: CityLearnEnv, agent: Agent, episodes: int) -> pd.DataFrame:
     """Run `episodes` episodes, return a DataFrame with reward stats per episode."""
     logs = []
     for ep in range(1, episodes + 1):
-        obs = env.reset()
+        obs, _ = env.reset()
         done = False
         ep_return = 0.0
         step_rewards = []
 
         while not done:
-            action = agent.predict(obs) if hasattr(agent, "predict") else agent.act(obs)
+            action = agent.predict(obs)
             obs, reward, terminated, truncated, info = env.step(action)
             r = _sum_reward(reward)
             ep_return += r
