@@ -1,10 +1,10 @@
 {
-    "root_directory": null, 
-    "central_agent": false,
+    "root_directory": "./data/", 
+    "central_agent": true,
     "random_seed": 42,
     "simulation_start_time_step": 0,
     "simulation_end_time_step": 8759,
-    "episode_time_steps": 1440,
+    "episode_time_steps": 8760,
     "rolling_episode_split": false,
     "random_episode_split": false,
     "seconds_per_time_step": 3600,
@@ -12,9 +12,9 @@
       "type": "corerl.environments.ComfortandConsumptionReductionReward"
     },
     "observations": {
-        "month": {"active": true, "shared_in_central": false},
-        "hour": {"active": true, "shared_in_central": false},
-        "day_type": {"active": true, "shared_in_central": false},
+        "month": {"active": true, "shared_in_central": true},
+        "hour": {"active": true, "shared_in_central": true},
+        "day_type": {"active": true, "shared_in_central": true},
 
         "non_shiftable_load": {"active": true, "shared_in_central": false},
         "occupant_count": {"active": true, "shared_in_central": false},

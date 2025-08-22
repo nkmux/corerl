@@ -7,4 +7,4 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["eval", "agents", "train", "dynamics", "environments", "utils"]
+packages = ["eval", "agents", "train", "dynamics", "environments", "utils", "SAC_Code"]

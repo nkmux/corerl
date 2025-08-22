@@ -11,8 +11,6 @@ Usage:
 import importlib.util, sys, pathlib
 import argparse
 from pathlib import Path
-import pandas as pd
-
 project_root = pathlib.Path(__file__).parent.parent.resolve()
 real_dir = project_root
 
@@ -25,9 +23,8 @@ corerl = importlib.util.module_from_spec(spec)
 sys.modules["corerl"] = corerl
 spec.loader.exec_module(corerl)
 # ---- END hotfix ----
-
 from citylearn.citylearn import CityLearnEnv 
-import pandas as pd
+import time
 
 from agents import RBC
 from eval import run_episode_logging, save_reward_plot, save_kpis
@@ -47,26 +44,17 @@ def main():
     out_csv   = Path(args.log_csv)
     plot_path = Path(args.plot_path)
     kpi_csv   = Path(args.eval_csv)
-    episodes = args.episodes    
 
-    env = CityLearnEnv(schema=schema_path, central_agent=False, random_seed=args.seed)
+    # 1- Environment init
+    env = CityLearnEnv(schema=schema_path, random_seed=args.seed)
+
+    # 2- Agent init
     agent = RBC(env)
 
-    agent.learn(episodes=episodes)
-    
+    # 6- Deterministic evaluation KPIs
+    save_kpis(env, agent, schema_path, kpi_csv)
+    print(f"[OK] Finished.")
 
-    # 1) Run & log episodes
-    log_df = run_episode_logging(env, agent, episodes=args.episodes)
-    out_csv.parent.mkdir(parents=True, exist_ok=True)
-    log_df.to_csv(out_csv, index=False)
-    print(f"[OK] Saved reward log to: {out_csv.resolve()}")
-
-    # 2) Plot episode returns
-    save_reward_plot(log_df, plot_path)
-
-    # 3) Deterministic evaluation KPIs
-    save_kpis(env, kpi_csv)
-    print("[OK] Finished.")
 
 
 if __name__ == "__main__":

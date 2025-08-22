@@ -1,5 +1,6 @@
 # corerl/eval/eval.py
 from pathlib import Path
+from typing import Any, Mapping, Union
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -30,7 +31,7 @@ def _is_done(terminated, truncated):
     return _any(terminated) or _any(truncated)
 
 # ---------- public API ----------
-def run_episode_logging(env: CityLearnEnv, agent: Agent, episodes: int) -> pd.DataFrame:
+def run_episode_logging(env: CityLearnEnv, agent: Agent, episodes: int = 1) -> pd.DataFrame:
     """Run `episodes` episodes, return a DataFrame with reward stats per episode."""
     logs = []
     for ep in range(1, episodes + 1):
@@ -40,7 +41,7 @@ def run_episode_logging(env: CityLearnEnv, agent: Agent, episodes: int) -> pd.Da
         step_rewards = []
 
         while not done:
-            action = agent.predict(obs)
+            action = agent.predict(obs, deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action)
             r = _sum_reward(reward)
             ep_return += r
@@ -76,10 +77,77 @@ def save_reward_plot(log_df: pd.DataFrame, out_path: Path) -> None:
     plt.savefig(out_path)
     print(f"[OK] Plot saved to: {out_path.resolve()}")
 
-def save_kpis(env, out_csv: Path) -> None:
-    """Run deterministic env.evaluate() and save KPIs to CSV."""
-    out_csv.parent.mkdir(parents=True, exist_ok=True)
-    kpis = env.evaluate()
-    print(kpis)
-    pd.DataFrame(kpis).to_csv(out_csv, index=False)
-    print(f"[OK] KPIs saved to: {out_csv.resolve()}")
+def save_kpis(env: CityLearnEnv, agent, schema, kpi_csv: str, deterministic=True):
+    """Fresh eval episode -> CityLearn KPIs -> CSV. Works for any agent by fixing action shape before env.step()."""
+    import numpy as np
+    import pandas as pd
+    from pathlib import Path
+
+    def _normalize_actions_for_env(actions, env: CityLearnEnv):
+        """Return actions in the exact shape CityLearn expects."""
+        # compute total dims & per-building dims
+        per_b_dims = []
+        total = 0
+        for b in env.buildings:
+            space = b.action_space
+            if hasattr(space, "shape") and space.shape:
+                d = int(np.prod(space.shape))
+            elif hasattr(space, "n"):
+                d = int(space.n)
+            else:
+                d = 1
+            per_b_dims.append(d); total += d
+
+        ca = getattr(env, "central_agent", False)
+
+        # If central_agent=True CityLearn expects [[a0, a1, ..., a(total-1)]]
+        if ca:
+            # actions may be flat, or per-building [[...],[...],...]
+            if isinstance(actions, (list, tuple)) and actions and isinstance(actions[0], (list, tuple)):
+                # concat per-building -> flat
+                flat = np.concatenate([np.asarray(a, dtype=np.float32).ravel() for a in actions], axis=0)
+            else:
+                flat = np.asarray(actions, dtype=np.float32).ravel()
+            assert flat.size == total, f"central_agent expects {total} dims, got {flat.size}"
+            return [flat.tolist()]
+
+        # If central_agent=False CityLearn expects [[b0...], [b1...], ...]
+        if isinstance(actions, (list, tuple)) and actions and isinstance(actions[0], (list, tuple)):
+            return [list(map(float, a)) for a in actions]
+
+        # otherwise: split a flat vector per building
+        flat = np.asarray(actions, dtype=np.float32).ravel()
+        assert flat.size == total, f"multi-agent expects {total} dims, got {flat.size}"
+        out, i = [], 0
+        for d in per_b_dims:
+            out.append(flat[i:i+d].tolist()); i += d
+        return out
+
+    print("[INFO] Starting KPI evaluation...")
+    print("[INFO] Running evaluation episode...")
+    reset_out = env.reset()
+    obs = reset_out[0] if isinstance(reset_out, tuple) else reset_out
+    done = False
+
+    # optional sanity
+    # print("[DEBUG] central_agent:", getattr(env, "central_agent", None))
+
+    while not done:
+        # Agent can return flat or per-building; we will normalize.
+        actions = agent.predict(obs, deterministic=deterministic)
+        env_actions = _normalize_actions_for_env(actions, env)  # <-- key fix
+
+        obs, _, terminated, truncated, _ = env.step(env_actions)
+        done = bool(terminated or truncated)
+
+    print("[INFO] Evaluation episode completed. Attempting KPI calculation...")
+    kpis = env.evaluate_citylearn_challenge()
+
+    kpi_df = pd.DataFrame(kpis).T.reset_index()
+    kpi_df.columns = ["kpi", "display_name", "weight", "value"]
+
+    out = Path(kpi_csv); out.parent.mkdir(parents=True, exist_ok=True)
+    kpi_df.to_csv(out, index=False)
+    print(kpi_df)
+    print(f"[OK] Saved KPIs to: {out.resolve()}")
+    return kpi_df

@@ -1,38 +1,10 @@
-cost_function,value,name,level
-all_time_peak_average,1.1138630894430164,District,district
-annual_normalized_unserved_energy_total,-4.6409763776035014e-10,District,district
-carbon_emissions_total,,District,district
-cost_total,,District,district
-daily_one_minus_load_factor_average,0.9764088943474787,District,district
-daily_peak_average,1.0522825662509279,District,district
-discomfort_cold_delta_average,0.0,District,district
-discomfort_cold_delta_maximum,0.0,District,district
-discomfort_cold_delta_minimum,0.0,District,district
-discomfort_cold_proportion,0.0,District,district
-discomfort_hot_delta_average,15.85064462158415,District,district
-discomfort_hot_delta_maximum,25.152379989624023,District,district
-discomfort_hot_delta_minimum,0.0,District,district
-discomfort_hot_proportion,1.0,District,district
-discomfort_proportion,1.0,District,district
-electricity_consumption_total,1.0692426383548441,District,district
-monthly_one_minus_load_factor_average,1.0277010311089223,District,district
-one_minus_thermal_resilience_proportion,,District,district
-power_outage_normalized_unserved_energy_total,,District,district
-ramping_average,1.5008381446202887,District,district
-zero_net_energy,1.0692426383548441,District,district
-electricity_consumption_total,1.0692426383548441,building_1,building
-zero_net_energy,1.0692426383548441,building_1,building
-carbon_emissions_total,,building_1,building
-cost_total,,building_1,building
-discomfort_proportion,1.0,building_1,building
-discomfort_cold_proportion,0.0,building_1,building
-discomfort_hot_proportion,1.0,building_1,building
-discomfort_cold_delta_minimum,0.0,building_1,building
-discomfort_cold_delta_maximum,0.0,building_1,building
-discomfort_cold_delta_average,0.0,building_1,building
-discomfort_hot_delta_minimum,0.0,building_1,building
-discomfort_hot_delta_maximum,25.152379989624023,building_1,building
-discomfort_hot_delta_average,15.85064462158415,building_1,building
-one_minus_thermal_resilience_proportion,,building_1,building
-power_outage_normalized_unserved_energy_total,,building_1,building
-annual_normalized_unserved_energy_total,-4.6409763776035014e-10,building_1,building
+kpi,display_name,weight,value
+carbon_emissions_total,Carbon emissions,0.1,
+discomfort_proportion,Unmet hours,0.3,0.3735909822866345
+ramping_average,Ramping,0.075,0.98213214116486
+daily_one_minus_load_factor_average,Load factor,0.075,0.9917875826130397
+daily_peak_average,Daily peak,0.075,0.977724138341425
+all_time_peak_average,All-time peak,0.075,0.9685615759691135
+one_minus_thermal_resilience_proportion,Thermal resilience,0.15,
+power_outage_normalized_unserved_energy_total,Unserved energy,0.15,
+average_score,Score,,0.4060927

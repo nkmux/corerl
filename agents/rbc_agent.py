@@ -47,7 +47,7 @@ class RBC(BasicRBC):
 
             for a_n in a:
                 if a_n == 'cooling_device':
-                    # Cooling device control (unchanged from your logic)
+                    # Cooling device control 
                     if temp_difference > self.comfort_band:
                         actions_.append(0.8)
                     else:

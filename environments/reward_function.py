@@ -1,64 +1,48 @@
 from typing import Any, List, Mapping, Union
+import numpy as np
 
 from citylearn.reward_function import ComfortReward
 
+
 class ComfortandConsumptionReductionReward(ComfortReward):
     def __init__(self, env_metadata: Mapping[str, Any]):
-        self.multiplier = 3.0
+        self.multiplier = 3.0          # extra penalty when too cold
+        self.deadband  = 0.5           # °C tolerance around setpoint
         super().__init__(env_metadata)
+        self._prev_p: List[Union[float, None]] = []  # per-building P_{t-1}
+
+    def _ensure_state(self, n_buildings: int):
+        if len(self._prev_p) != n_buildings:
+            self._prev_p = [None] * n_buildings
 
     def calculate(self, observations: List[Mapping[str, Union[int, float]]]) -> List[float]:
-        reward_list = []
-        total_building_consumption_minus1 = 0 
-        r = 0 
-        s = 0 
+        n = len(observations)
+        self._ensure_state(n)
+        rewards: List[float] = []
 
-        for o in observations:
-            indoor_dry_bulb_temperature = o['indoor_dry_bulb_temperature']
-            set_point = o['indoor_dry_bulb_temperature_cooling_set_point']
-            delta = indoor_dry_bulb_temperature - set_point
+        for i, o in enumerate(observations):
+            Tin   = float(o['indoor_dry_bulb_temperature'])
+            Tset  = float(o['indoor_dry_bulb_temperature_cooling_set_point'])
+            P     = float(o['net_electricity_consumption'])
+            outage = int(o.get('power_outage', 0))
+            nsl    = float(o.get('non_shiftable_load', 0.0))
 
-            if delta < 0.0:
-                delta *= self.multiplier
-            else:
-                pass
-            
-            
-            #Ramping
-            total_building_consumption = o['net_electricity_consumption']
-            if total_building_consumption_minus1 != 0: 
-                r = total_building_consumption - total_building_consumption_minus1 
-            total_building_consumption_minus1 = total_building_consumption
-            
-            '''
-            cooling_demand = o['coooling_demand']
-            dhw_demand = o['dhw_demand']
-            cooling_electricity_consumption = o['cooling_electricity_consumption']
-            dhw_electricity_consumption = o['dhw_electricity_consumption']
-            '''
-            # Carbon emissions 
-            #carbon_emissions_rate = o['carbon_intensity']
-            #g = max(0,total_building_consumption*carbon_emissions_rate)
+            # --- Comfort with deadband + cold multiplier
+            delta = Tin - Tset
+            err   = max(0.0, abs(delta) - self.deadband)
+            if delta < 0.0:  # too cold
+                err *= self.multiplier
 
-            # Poorly done normalized unserved energy 
-            outage = o['power_outage'] 
-            non_shiftable_load = o['non_shiftable_load']
+            # --- Ramping: time-difference per building
+            prevP = self._prev_p[i]
+            ramp  = abs(P - prevP) if prevP is not None else 0.0
+            self._prev_p[i] = P
 
-            if outage == 1: 
-                s_expected = non_shiftable_load 
-                s_served = total_building_consumption
-                s = s_expected - s_served
+            # --- Outage unserved energy (nonnegative and zero if no outage)
+            s = max(0.0, nsl - P) if outage else 0.0
 
-            else: 
-                pass
+            # NOTE: weights are in different units; tune/normalize as needed
+            reward = -0.3 * err - 0.15 * ramp - 0.1 * s
+            rewards.append(reward)
 
-            reward = -0.3*abs(delta) + -0.1*(s) + -0.15*abs(r) #-0.05*(g-7000)
-            reward_list.append(reward)
-
-        if self.central_agent:
-            reward = [sum(reward_list)/len(reward_list)]
-
-        else:
-            reward = reward_list
-
-        return reward
+        return [float(np.mean(rewards))] if self.central_agent else rewards
