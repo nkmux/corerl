@@ -1,0 +1,56 @@
+COMPREHENSIVE MPC PERFORMANCE ANALYSIS
+============================================================
+
+Overall Statistics:
+------------------
+  Mean Annual Cost: $56 ± $43
+  Mean Violation Rate: 63.41% ± 21.58%
+  Mean Energy Consumption: 0.2 ± 0.2 kW
+  Mean Savings: 89.38% ± 9.31%
+  Mean Success Rate: 99.64% ± 0.56%
+
+Best Performers:
+---------------
+  Lowest Cost:
+    Building: Building 2
+    Weather: Jeddah
+    Total_Cost: 17.499040918924305
+  Highest Savings:
+    Building: Building 2
+    Weather: Jeddah
+    Savings_Percent: 97.7820117864112
+  Lowest Violations:
+    Building: Building 3
+    Weather: Abha
+    Violation_Rate: 31.54761904761905
+
+Building Ranking:
+----------------
+  Total_Cost:
+    Building 1: 56.27
+    Building 2: 60.67
+    Building 3: 52.25
+  Violation_Rate:
+    Building 1: 66.12
+    Building 2: 64.68
+    Building 3: 59.42
+  Savings_Percent:
+    Building 1: 91.64
+    Building 2: 92.31
+    Building 3: 84.18
+
+Weather Ranking:
+---------------
+  Total_Cost:
+    Abha: 39.5
+    Jeddah: 18.06
+    Riyadh: 111.63
+  Violation_Rate:
+    Abha: 36.43
+    Jeddah: 69.54
+    Riyadh: 84.25
+  Savings_Percent:
+    Abha: 92.62
+    Jeddah: 96.53
+    Riyadh: 78.98
+

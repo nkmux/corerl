@@ -1,10 +1,10 @@
 kpi,display_name,weight,value
 carbon_emissions_total,Carbon emissions,0.1,
-discomfort_proportion,Unmet hours,0.3,0.3735909822866345
-ramping_average,Ramping,0.075,0.98213214116486
-daily_one_minus_load_factor_average,Load factor,0.075,0.9917875826130397
-daily_peak_average,Daily peak,0.075,0.977724138341425
-all_time_peak_average,All-time peak,0.075,0.9685615759691135
+discomfort_proportion,Unmet hours,0.3,0.5440238338306743
+ramping_average,Ramping,0.075,1.307130713426008
+daily_one_minus_load_factor_average,Load factor,0.075,0.9813783113752882
+daily_peak_average,Daily peak,0.075,0.9533325524939057
+all_time_peak_average,All-time peak,0.075,1.0980216463699666
 one_minus_thermal_resilience_proportion,Thermal resilience,0.15,
 power_outage_normalized_unserved_energy_total,Unserved energy,0.15,
-average_score,Score,,0.4060927
+average_score,Score,,0.4886969

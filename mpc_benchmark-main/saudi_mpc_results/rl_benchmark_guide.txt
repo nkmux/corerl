@@ -1,0 +1,44 @@
+REINFORCEMENT LEARNING BENCHMARK GUIDE
+==================================================
+
+PERFORMANCE TARGETS:
+--------------------
+EXCELLENT Performance:
+  - Annual Cost: < $19
+  - Violation Rate: < 40.8%
+  - Savings vs Baseline: > 94.6%
+
+GOOD Performance:
+  - Annual Cost: < $41
+  - Violation Rate: < 71.9%
+  - Savings vs Baseline: > 93.9%
+
+MINIMUM Performance:
+  - Annual Cost: < $104
+  - Violation Rate: < 82.8%
+  - Savings vs Baseline: > 84.5%
+
+TRAINING STRATEGY:
+------------------
+Easy Scenarios (Start Here):
+  - Building_3 + Abha Weather (Difficulty: 315.49)
+  - Building_2 + Abha Weather (Difficulty: 369.81)
+  - Building_1 + Abha Weather (Difficulty: 407.76)
+
+Medium Scenarios (Intermediate Training):
+  - Building_3 + Jeddah Weather (Difficulty: 624.26)
+  - Building_1 + Jeddah Weather (Difficulty: 719.50)
+  - Building_2 + Jeddah Weather (Difficulty: 742.57)
+
+Hard Scenarios (Advanced Testing):
+  - Building_2 + Riyadh Weather (Difficulty: 828.19)
+  - Building_3 + Riyadh Weather (Difficulty: 843.06)
+  - Building_1 + Riyadh Weather (Difficulty: 856.45)
+
+RECOMMENDED APPROACH:
+--------------------
+1. Start training on easy scenarios to establish basic competency
+2. Gradually introduce medium and hard scenarios
+3. Use curriculum learning with increasing difficulty
+4. Validate on all scenarios to ensure generalization
+5. Compare against MPC performance on identical test periods

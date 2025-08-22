@@ -1,0 +1,425 @@
+{
+  "Building_1_Abha": {
+    "building": "Building_1",
+    "weather": "Abha",
+    "annual": {
+      "total_annual_cost": 40.85510311887033,
+      "total_annual_cost_usd": 10.894694165032087,
+      "avg_violation_rate": 40.773809523809526,
+      "avg_energy_consumption": 0.16887856778633567,
+      "avg_success_rate": 99.92559523809524,
+      "annual_savings_vs_baseline": 93.92921388422667,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 5.364183666442408,
+        "total_energy_cost_usd": 1.4304489777179754,
+        "violation_rate": 0.5952380952380952,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.08869351300334669,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 5.0284992381312765,
+        "total_energy_cost_usd": 1.3409331301683405,
+        "violation_rate": 0.5952380952380952,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.08314317523365207,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 17.618831944208143,
+        "total_energy_cost_usd": 4.698355185122171,
+        "violation_rate": 79.76190476190477,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.2913166657441822,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 12.8435882700885,
+        "total_energy_cost_usd": 3.4249568720236,
+        "violation_rate": 82.14285714285714,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.2123609171641617,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_1_Jeddah": {
+    "building": "Building_1",
+    "weather": "Jeddah",
+    "annual": {
+      "total_annual_cost": 18.854329139581207,
+      "total_annual_cost_usd": 5.027821103888321,
+      "avg_violation_rate": 71.94940476190476,
+      "avg_energy_consumption": 0.07793621502803079,
+      "avg_success_rate": 100.0,
+      "annual_savings_vs_baseline": 97.19837692662873,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 4.594360010112173,
+        "total_energy_cost_usd": 1.225162669363246,
+        "violation_rate": 25.892857142857146,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07596494725714573,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 4.565926394126458,
+        "total_energy_cost_usd": 1.2175803717670552,
+        "violation_rate": 75.89285714285714,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07549481471769937,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 4.251641403189505,
+        "total_energy_cost_usd": 1.1337710408505348,
+        "violation_rate": 89.88095238095238,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07029830362416509,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 5.442401332153072,
+        "total_energy_cost_usd": 1.451307021907486,
+        "violation_rate": 96.13095238095238,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.08998679451311296,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_1_Riyadh": {
+    "building": "Building_1",
+    "weather": "Riyadh",
+    "annual": {
+      "total_annual_cost": 109.1102610153179,
+      "total_annual_cost_usd": 29.09606960408477,
+      "avg_violation_rate": 85.63988095238095,
+      "avg_energy_consumption": 0.45101794401173073,
+      "avg_success_rate": 99.55357142857143,
+      "annual_savings_vs_baseline": 83.7869688950987,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 21.118468760958905,
+        "total_energy_cost_usd": 5.6315916695890404,
+        "violation_rate": 42.55952380952381,
+        "success_rate": 98.51190476190477,
+        "avg_energy_consumption": 0.3491810311005111,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 24.3255226572312,
+        "total_energy_cost_usd": 6.48680604192832,
+        "violation_rate": 100.0,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.402207715893373,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 34.767644974759335,
+        "total_energy_cost_usd": 9.271371993269156,
+        "violation_rate": 100.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.5748618547413911,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 28.898624622368455,
+        "total_energy_cost_usd": 7.706299899298255,
+        "violation_rate": 100.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.4778211743116478,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_2_Abha": {
+    "building": "Building_2",
+    "weather": "Abha",
+    "annual": {
+      "total_annual_cost": 42.317372177566526,
+      "total_annual_cost_usd": 11.284632580684407,
+      "avg_violation_rate": 36.97916666666667,
+      "avg_energy_consumption": 0.17492300007261297,
+      "avg_success_rate": 99.77678571428572,
+      "annual_savings_vs_baseline": 94.63630988951004,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 5.257681304339635,
+        "total_energy_cost_usd": 1.4020483478239028,
+        "violation_rate": 0.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.08693256124900191,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 4.73066441701204,
+        "total_energy_cost_usd": 1.2615105112032108,
+        "violation_rate": 0.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07821865768869114,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 19.882383004938,
+        "total_energy_cost_usd": 5.3019688013168,
+        "violation_rate": 69.04761904761905,
+        "success_rate": 99.40476190476191,
+        "avg_energy_consumption": 0.328743105240377,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 12.446643451276854,
+        "total_energy_cost_usd": 3.3191049203404943,
+        "violation_rate": 78.86904761904762,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.20579767611238187,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_2_Jeddah": {
+    "building": "Building_2",
+    "weather": "Jeddah",
+    "annual": {
+      "total_annual_cost": 17.499040918924305,
+      "total_annual_cost_usd": 4.6664109117131485,
+      "avg_violation_rate": 74.25595238095238,
+      "avg_energy_consumption": 0.07233399850745828,
+      "avg_success_rate": 99.92559523809524,
+      "annual_savings_vs_baseline": 97.7820117864112,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 4.72677182193154,
+        "total_energy_cost_usd": 1.2604724858484104,
+        "violation_rate": 39.58333333333333,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07815429599754531,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 4.199050502890852,
+        "total_energy_cost_usd": 1.1197468007708937,
+        "violation_rate": 74.40476190476191,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.06942874508748102,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 3.1964515149998807,
+        "total_energy_cost_usd": 0.8523870706666348,
+        "violation_rate": 88.39285714285714,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.05285138086970701,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 5.376767079102033,
+        "total_energy_cost_usd": 1.4338045544272089,
+        "violation_rate": 94.64285714285714,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.08890157207509976,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_2_Riyadh": {
+    "building": "Building_2",
+    "weather": "Riyadh",
+    "annual": {
+      "total_annual_cost": 122.20217931899546,
+      "total_annual_cost_usd": 32.587247818398794,
+      "avg_violation_rate": 82.8125,
+      "avg_energy_consumption": 0.5051346698040488,
+      "avg_success_rate": 98.21428571428572,
+      "annual_savings_vs_baseline": 84.51098007826943,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 8.687647028736833,
+        "total_energy_cost_usd": 2.3167058743298226,
+        "violation_rate": 42.55952380952381,
+        "success_rate": 94.04761904761905,
+        "avg_energy_consumption": 0.1436449574857281,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 28.35484522640795,
+        "total_energy_cost_usd": 7.561292060375453,
+        "violation_rate": 96.13095238095238,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.4688301128705018,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 31.484735385966122,
+        "total_energy_cost_usd": 8.395929436257632,
+        "violation_rate": 96.42857142857143,
+        "success_rate": 99.10714285714286,
+        "avg_energy_consumption": 0.5205809422282759,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 53.674951677884565,
+        "total_energy_cost_usd": 14.313320447435881,
+        "violation_rate": 96.13095238095238,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.8874826666316893,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_3_Abha": {
+    "building": "Building_3",
+    "weather": "Abha",
+    "annual": {
+      "total_annual_cost": 35.33285807085775,
+      "total_annual_cost_usd": 9.422095485562068,
+      "avg_violation_rate": 31.54761904761905,
+      "avg_energy_consumption": 0.14605182734316202,
+      "avg_success_rate": 99.85119047619048,
+      "annual_savings_vs_baseline": 89.29988884262067,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 4.811193015043655,
+        "total_energy_cost_usd": 1.2829848040116412,
+        "violation_rate": 0.2976190476190476,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07955014905826148,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 4.543093177204291,
+        "total_energy_cost_usd": 1.2114915139211444,
+        "violation_rate": 0.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07511728136911856,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 17.5977518658767,
+        "total_energy_cost_usd": 4.692733830900453,
+        "violation_rate": 59.523809523809526,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.2909681194754745,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 8.380820012733109,
+        "total_energy_cost_usd": 2.234885336728829,
+        "violation_rate": 66.36904761904762,
+        "success_rate": 99.40476190476191,
+        "avg_energy_consumption": 0.1385717594697935,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_3_Jeddah": {
+    "building": "Building_3",
+    "weather": "Jeddah",
+    "annual": {
+      "total_annual_cost": 17.820770550809023,
+      "total_annual_cost_usd": 4.75220548021574,
+      "avg_violation_rate": 62.42559523809524,
+      "avg_energy_consumption": 0.07366389943290767,
+      "avg_success_rate": 99.92559523809524,
+      "annual_savings_vs_baseline": 94.60320403683723,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 4.372979140924603,
+        "total_energy_cost_usd": 1.1661277709132274,
+        "violation_rate": 23.511904761904763,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.07230454928777451,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 3.7064371167706707,
+        "total_energy_cost_usd": 0.9883832311388456,
+        "violation_rate": 61.60714285714286,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.061283682486287544,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 3.241815405416829,
+        "total_energy_cost_usd": 0.8644841081111544,
+        "violation_rate": 82.14285714285714,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.05360144519538408,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 6.4995388876969225,
+        "total_energy_cost_usd": 1.733210370052513,
+        "violation_rate": 82.44047619047619,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.10746592076218457,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  },
+  "Building_3_Riyadh": {
+    "building": "Building_3",
+    "weather": "Riyadh",
+    "annual": {
+      "total_annual_cost": 103.58256676032534,
+      "total_annual_cost_usd": 27.622017802753422,
+      "avg_violation_rate": 84.30059523809524,
+      "avg_energy_consumption": 0.42816867873811726,
+      "avg_success_rate": 99.62797619047619,
+      "annual_savings_vs_baseline": 68.63132396254412,
+      "number_of_seasons": 4
+    },
+    "seasons": {
+      "Winter": {
+        "total_energy_cost": 21.62529146165403,
+        "total_energy_cost_usd": 5.7667443897744075,
+        "violation_rate": 40.17857142857143,
+        "success_rate": 98.80952380952381,
+        "avg_energy_consumption": 0.357561036072322,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Spring": {
+        "total_energy_cost": 22.465315919984842,
+        "total_energy_cost_usd": 5.990750911995958,
+        "violation_rate": 97.02380952380952,
+        "success_rate": 99.70238095238095,
+        "avg_energy_consumption": 0.37145032936482875,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Summer": {
+        "total_energy_cost": 32.8131021765266,
+        "total_energy_cost_usd": 8.750160580407094,
+        "violation_rate": 100.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.5425446788446858,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      },
+      "Autumn": {
+        "total_energy_cost": 26.678857202159858,
+        "total_energy_cost_usd": 7.114361920575963,
+        "violation_rate": 100.0,
+        "success_rate": 100.0,
+        "avg_energy_consumption": 0.44111867067063254,
+        "avg_electricity_rate_sar": 0.17999999999999997
+      }
+    }
+  }
+}
