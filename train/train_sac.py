@@ -85,21 +85,55 @@ class EnvActionAdapter:
         return _to_env_actions(a, self.env)
 
 
+def create_sac_agent_from_saved_model(model_path: str, env) -> SAC:
+    """
+    Create a SAC agent and load a saved model
+    
+    Args:
+        model_path: Path to the saved model (.zip file)
+        env: CityLearn environment
+        
+    Returns:
+        SAC agent with loaded model
+    """
+    print(f"[OK] Loading saved SAC model from: {model_path}")
+    
+    # Create agent
+    agent = SAC(env)
+    
+    # Load the saved model
+    agent.load(model_path)
+    
+    print(f"[OK] Successfully loaded SAC model")
+    return agent
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--schema", type=str, default="./data/schema.json", help="Path to CityLearn's schema.json")
-    parser.add_argument("--episodes", type=int, default=100, help="Number of rollout episodes to log")
+    parser.add_argument("--episodes", type=int, default=100, help="Number of training episodes")
+    parser.add_argument("--eval-episodes", type=int, default=1, help="Number of evaluation episodes")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--eval_csv", type=str, default="./figures/kpis_after_training.csv", help="Where to save KPIs CSV")
-    parser.add_argument("--log_csv", type=str, default="./figures/episode_rewards.csv", help="Where to save episode reward log")
-    parser.add_argument("--plot_path", type=str, default="./figures/reward_trend.png", help="Where to save reward trend plot")
+    parser.add_argument("--eval_csv", type=str, default="./figures/sac_kpis_after_training.csv", help="Where to save KPIs CSV")
+    parser.add_argument("--log_csv", type=str, default="./figures/sac_episode_rewards.csv", help="Where to save episode reward log")
+    parser.add_argument("--plot_path", type=str, default="./figures/sac_reward_trend.png", help="Where to save reward trend plot")
+    
+    # ✨ NEW: Model saving/loading arguments
+    parser.add_argument("--save-model", type=str, default="./models/sac_trained_model.zip", help="Path to save the trained model")
+    parser.add_argument("--load-model", type=str, default=None, help="Path to load a pre-trained model (skips training)")
+    parser.add_argument("--model-dir", type=str, default="./models", help="Directory to save models")
+    
     args = parser.parse_args()
 
     schema_path = Path(args.schema).expanduser().resolve()
     out_csv   = Path(args.log_csv)
     plot_path = Path(args.plot_path)
     kpi_csv   = Path(args.eval_csv)
-    training_episodes = args.episodes 
+    
+    # ✨ NEW: Create model directory
+    model_dir = Path(args.model_dir)
+    model_dir.mkdir(exist_ok=True)
+    save_model_path = Path(args.save_model)
 
     # load base schema once
     with schema_path.open() as f:
@@ -112,21 +146,53 @@ def main():
 
     # 1- Environment init
     env = CityLearnEnv(schema=schema, random_seed=args.seed)
-    agent = SAC(env)
-    agent.learn(episodes=training_episodes)
+    
+    # ✨ NEW: Check if we should load a pre-trained model or train from scratch
+    if args.load_model:
+        print(f"[OK] Loading pre-trained model from: {args.load_model}")
+        agent = create_sac_agent_from_saved_model(args.load_model, env)
+        print(f"[OK]  Skipping training, using loaded model")
+    else:
+        print(f"[OK] Training new SAC agent for {args.episodes} episodes")
+        agent = SAC(env)
+        agent.learn(episodes=args.episodes)
+        
+        # ✨ NEW: Save the trained model
+        print(f"💾 Saving trained model to: {save_model_path}")
+        agent.save(str(save_model_path))
+        print(f"✅ Model saved successfully!")
 
-    # 4- Run & log episodes
+    # 4- Run & log episodes for evaluation
+    print(f"[OK] Running evaluation with {args.eval_episodes} episodes")
     start = schema.get("simulation_start_time_step", 0)
     end   = schema.get("simulation_end_time_step", 8759)
     schema["episode_time_steps"] = end - start + 1  # full span (e.g., 8760 or 8670)
     schema["rolling_episode_split"] = False
     schema["random_episode_split"] = False
     
+    # Create evaluation environment
+    eval_env = CityLearnEnv(schema=schema, random_seed=args.seed)
+    
+    # Run episode logging for evaluation
+    eval_agent = EnvActionAdapter(agent, eval_env)
+    log_df = run_episode_logging(eval_env, eval_agent, episodes=args.eval_episodes)
+    
+    # Save episode logs and plots
+    log_df.to_csv(out_csv, index=False)
+    print(f"[OK] Saved episode logs to: {out_csv}")
+    
+    save_reward_plot(log_df, plot_path)
+    print(f"[OK] Saved reward plot to: {plot_path}")
+    
     # 6- Deterministic evaluation KPIs
-    eval_agent = EnvActionAdapter(agent, env)
-    save_kpis(env, eval_agent, schema_path, kpi_csv)
-    print(f"[OK] Finished.")
-
+    save_kpis(eval_env, eval_agent, schema_path, kpi_csv)
+    
+    print(f"\n🎯 TRAINING SUMMARY:")
+    print(f"   • Model saved to: {save_model_path}")
+    print(f"   • Episode logs: {out_csv}")
+    print(f"   • Reward plot: {plot_path}")
+    print(f"   • KPIs saved to: {kpi_csv}")
+    print(f"[OK] SAC training and evaluation finished!")
 
 
 if __name__ == "__main__":
