@@ -162,20 +162,19 @@ def main():
         agent.save(str(save_model_path))
         print(f"✅ Model saved successfully!")
 
-    # 4- Run & log episodes for evaluation
-    print(f"[OK] Running evaluation with {args.eval_episodes} episodes")
+    # 4- Episode logging on SEPARATE env (doesn't contaminate KPI evaluation)
+    print(f"[OK] Running episode logging with {args.eval_episodes} episodes")
     start = schema.get("simulation_start_time_step", 0)
     end   = schema.get("simulation_end_time_step", 8759)
-    schema["episode_time_steps"] = end - start + 1  # full span (e.g., 8760 or 8670)
-    schema["rolling_episode_split"] = False
-    schema["random_episode_split"] = False
+    log_schema = schema.copy()  # Copy to avoid mutating original
+    log_schema["episode_time_steps"] = end - start + 1  # full span
+    log_schema["rolling_episode_split"] = False
+    log_schema["random_episode_split"] = False
     
-    # Create evaluation environment
-    eval_env = CityLearnEnv(schema=schema, random_seed=args.seed)
-    
-    # Run episode logging for evaluation
-    eval_agent = EnvActionAdapter(agent, eval_env)
-    log_df = run_episode_logging(eval_env, eval_agent, episodes=args.eval_episodes)
+    # Create separate logging env (doesn't affect KPI env)
+    log_env = CityLearnEnv(schema=log_schema, random_seed=args.seed)
+    log_agent = EnvActionAdapter(agent, log_env)
+    log_df = run_episode_logging(log_env, log_agent, episodes=args.eval_episodes)
     
     # Save episode logs and plots
     log_df.to_csv(out_csv, index=False)
@@ -184,8 +183,15 @@ def main():
     save_reward_plot(log_df, plot_path)
     print(f"[OK] Saved reward plot to: {plot_path}")
     
-    # 6- Deterministic evaluation KPIs
-    save_kpis(eval_env, eval_agent, schema_path, kpi_csv)
+    # 5- EXACT OLD VERSION BEHAVIOR: Mutate schema but DON'T use it for KPI evaluation
+    # The schema mutation in old version had NO EFFECT on save_kpis because env was already created
+    schema["episode_time_steps"] = end - start + 1  # This mutation is IGNORED (like old version)
+    schema["rolling_episode_split"] = False         # This mutation is IGNORED (like old version)
+    schema["random_episode_split"] = False          # This mutation is IGNORED (like old version)
+    
+    # 6- Deterministic evaluation KPIs (EXACTLY like old version)
+    eval_agent = EnvActionAdapter(agent, env)
+    save_kpis(env, eval_agent, schema_path, kpi_csv)
     
     print(f"\n🎯 TRAINING SUMMARY:")
     print(f"   • Model saved to: {save_model_path}")
